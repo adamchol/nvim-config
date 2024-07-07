@@ -137,6 +137,9 @@ vim.opt.clipboard = "unnamedplus"
 -- Enable break indent
 vim.opt.breakindent = true
 
+vim.opt.tabstop = 4
+vim.opt.softtabstop = 4
+vim.opt.shiftwidth = 4
 -- Save undo history
 vim.opt.undofile = true
 
@@ -684,7 +687,7 @@ require("lazy").setup({
 		lazy = false,
 		keys = {
 			{
-				"<leader>f",
+				"<leader>F",
 				function()
 					require("conform").format({ async = true, lsp_fallback = true })
 				end,
