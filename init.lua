@@ -33,7 +33,7 @@ vim.opt.splitbelow = true
 vim.opt.list = true
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.opt.inccommand = "split"
-vim.opt.cursorline = true
+vim.opt.cursorline = false
 vim.opt.scrolloff = 10
 vim.opt.hlsearch = true
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
@@ -81,6 +81,12 @@ require("lazy").setup({
 			"stevearc/dressing.nvim",
 		},
 		config = true,
+	},
+	{
+		"karb94/neoscroll.nvim",
+		config = function()
+			require("neoscroll").setup({})
+		end,
 	},
 	--
 	--
@@ -144,8 +150,18 @@ require("lazy").setup({
 			--
 			--
 			--
+			local actions = require("telescope.actions")
 			require("telescope").setup({
-				--
+				defaults = {
+					mappings = {
+						i = {
+							["<Esc>"] = actions.close,
+						},
+						n = {
+							["<Esc>"] = actions.close,
+						},
+					},
+				},
 				extensions = {
 					["ui-select"] = {
 						require("telescope.themes").get_dropdown(),
@@ -267,9 +283,7 @@ require("lazy").setup({
 			capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 			--
 			local servers = {
-				--
-				--
-				--
+				kotlin_language_server = {},
 				lua_ls = {
 					settings = {
 						Lua = {
@@ -314,7 +328,7 @@ require("lazy").setup({
 		opts = {
 			notify_on_error = false,
 			format_on_save = function(bufnr)
-				local disable_filetypes = { c = true, cpp = true }
+				local disable_filetypes = {}
 				return {
 					timeout_ms = 500,
 					lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
@@ -362,10 +376,10 @@ require("lazy").setup({
 					["<C-b>"] = cmp.mapping.scroll_docs(-4),
 					["<C-f>"] = cmp.mapping.scroll_docs(4),
 					["<Tab>"] = cmp.mapping.confirm({ select = true }),
-					--['<CR>'] = cmp.mapping.confirm { select = true },
+					-- ["<CR>"] = cmp.mapping.confirm({ select = true }),
 					--['<Tab>'] = cmp.mapping.select_next_item(),
 					--['<S-Tab>'] = cmp.mapping.select_prev_item(),
-					["<C-Space>"] = cmp.mapping.complete({}),
+					["<C-c>"] = cmp.mapping.complete({}),
 					--
 					["<C-l>"] = cmp.mapping(function()
 						if luasnip.expand_or_locally_jumpable() then
@@ -419,7 +433,7 @@ require("lazy").setup({
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
 		opts = {
-			ensure_installed = { "bash", "c", "diff", "html", "lua", "luadoc", "markdown", "vim", "vimdoc" },
+			ensure_installed = { "bash", "c", "diff", "html", "lua", "luadoc", "markdown", "vim", "vimdoc", "kotlin" },
 			auto_install = true,
 			highlight = {
 				enable = true,
