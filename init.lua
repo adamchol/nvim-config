@@ -3,7 +3,7 @@ vim.g.maplocalleader = " "
 vim.keymap.set("n", "<leader>pv", function()
 	vim.cmd("w")
 	vim.cmd("Ex")
-end)
+end, { desc = "Open the File Explorer" })
 vim.keymap.set({ "n", "i", "v" }, "<C-s>", vim.cmd.w, { desc = "Save file" })
 vim.cmd([[
   augroup AutoSave
@@ -82,13 +82,6 @@ require("lazy").setup({
 		},
 		config = true,
 	},
-	{
-		"karb94/neoscroll.nvim",
-		config = function()
-			require("neoscroll").setup({})
-		end,
-	},
-	--
 	--
 	{ "numToStr/Comment.nvim", opts = {} },
 	--
@@ -103,6 +96,69 @@ require("lazy").setup({
 				changedelete = { text = "~" },
 			},
 		},
+	},
+
+	{
+		"iamcco/markdown-preview.nvim",
+		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+		ft = { "markdown" },
+		build = function()
+			vim.fn["mkdp#util#install"]()
+		end,
+	},
+	{
+		"windwp/nvim-autopairs",
+		event = "InsertEnter",
+		config = true,
+		-- use opts = {} for passing setup options
+		-- this is equalent to setup({}) function
+	},
+	{
+		"ThePrimeagen/harpoon",
+		branch = "harpoon2",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		config = function()
+			local harpoon = require("harpoon")
+
+			harpoon:setup({})
+
+			-- basic telescope configuration
+			local conf = require("telescope.config").values
+			local function toggle_telescope(harpoon_files)
+				local file_paths = {}
+				for _, item in ipairs(harpoon_files.items) do
+					table.insert(file_paths, item.value)
+				end
+
+				require("telescope.pickers")
+					.new({}, {
+						prompt_title = "Harpoon",
+						finder = require("telescope.finders").new_table({
+							results = file_paths,
+						}),
+						previewer = conf.file_previewer({}),
+						sorter = conf.generic_sorter({}),
+					})
+					:find()
+			end
+
+			vim.keymap.set("n", "<C-e>", function()
+				toggle_telescope(harpoon:list())
+			end, { desc = "Open harpoon window" })
+
+			vim.keymap.set("n", "<leader>a", function()
+				harpoon:list():add()
+			end, { desc = "Add file to Harpoon" })
+			vim.keymap.set("n", "<leader>R", function()
+				harpoon:list():clear()
+			end, { desc = "Remove file from Harpoon" })
+			vim.keymap.set("n", "<C-P>", function()
+				harpoon:list():prev()
+			end, { desc = "Previous file from Harpoon" })
+			vim.keymap.set("n", "<C-N>", function()
+				harpoon:list():next()
+			end, { desc = "Next file from Harpoon" })
+		end,
 	},
 	--
 	--
