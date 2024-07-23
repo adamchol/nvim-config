@@ -12,7 +12,6 @@ vim.cmd([[
   augroup END
 ]])
 --
-vim.g.have_nerd_font = false
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.mouse = "a"
@@ -81,6 +80,23 @@ require("lazy").setup({
 			"stevearc/dressing.nvim",
 		},
 		config = true,
+	},
+	{
+		"folke/which-key.nvim",
+		event = "VimEnter",
+		config = function()
+			require("which-key").setup({ delay = 1000 })
+
+			require("which-key").add({
+				{ "<leader>c", group = "[C]ode" },
+				{ "<leader>d", group = "[D]ocument" },
+				{ "<leader>r", group = "[R]ename" },
+				{ "<leader>s", group = "[S]earch" },
+				{ "<leader>w", group = "[W]orkspace" },
+				{ "<leader>t", group = "[T]oggle" },
+				{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
+			})
+		end,
 	},
 	--
 	{ "numToStr/Comment.nvim", opts = {} },
@@ -160,31 +176,16 @@ require("lazy").setup({
 			end, { desc = "Next file from Harpoon" })
 		end,
 	},
-	--
-	--
-	--
-	--
 	{
-		"folke/which-key.nvim",
-		event = "VimEnter",
+		"kylechui/nvim-surround",
+		version = "*", -- Use for stability; omit to use `main` branch for the latest features
+		event = "VeryLazy",
 		config = function()
-			require("which-key").setup()
-			require("which-key").register({
-				["<leader>c"] = { name = "[C]ode", _ = "which_key_ignore" },
-				["<leader>d"] = { name = "[D]ocument", _ = "which_key_ignore" },
-				["<leader>r"] = { name = "[R]ename", _ = "which_key_ignore" },
-				["<leader>s"] = { name = "[S]earch", _ = "which_key_ignore" },
-				["<leader>w"] = { name = "[W]orkspace", _ = "which_key_ignore" },
-				["<leader>t"] = { name = "[T]oggle", _ = "which_key_ignore" },
-				["<leader>h"] = { name = "Git [H]unk", _ = "which_key_ignore" },
+			require("nvim-surround").setup({
+				-- Configuration here, or leave empty to use defaults
 			})
-			require("which-key").register({
-				["<leader>h"] = { "Git [H]unk" },
-			}, { mode = "v" })
 		end,
 	},
-	--
-	--
 	{
 		"nvim-telescope/telescope.nvim",
 		event = "VimEnter",
@@ -199,7 +200,7 @@ require("lazy").setup({
 				end,
 			},
 			{ "nvim-telescope/telescope-ui-select.nvim" },
-			{ "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
+			-- { "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
 		},
 		config = function()
 			--
@@ -469,21 +470,6 @@ require("lazy").setup({
 		event = "VimEnter",
 		dependencies = { "nvim-lua/plenary.nvim" },
 		opts = { signs = false },
-	},
-	{
-		"echasnovski/mini.nvim",
-		config = function()
-			--
-			require("mini.ai").setup({ n_lines = 500 })
-			--
-			require("mini.surround").setup()
-			local statusline = require("mini.statusline")
-			statusline.setup({ use_icons = vim.g.have_nerd_font })
-			---@diagnostic disable-next-line: duplicate-set-field
-			statusline.section_location = function()
-				return "%2l:%-2v"
-			end
-		end,
 	},
 	{
 		"nvim-treesitter/nvim-treesitter",

@@ -1,5 +1,9 @@
 {
     "diagnostics.disable": [
-        "unused-label"
+        "unused-label",
+        "deprecated"
+    ],
+    "diagnostics.globals": [
+        "LazyVim"
     ]
 }
