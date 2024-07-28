@@ -11,6 +11,8 @@ vim.cmd([[
     autocmd InsertLeave,TextChanged * silent! write
   augroup END
 ]])
+
+vim.keymap.set("n", "<leader>ee", "oif err != nil {}<left><CR><CR><up><Tab><Tab>return err<Esc>^w")
 --
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -38,7 +40,7 @@ vim.opt.hlsearch = true
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [D]iagnostic message" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [D]iagnostic message" })
-vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic [E]rror messages" })
+vim.keymap.set("n", "<leader>ed", vim.diagnostic.open_float, { desc = "Show diagnostic [E]rror messages" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
 --
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
@@ -166,8 +168,11 @@ require("lazy").setup({
 				harpoon:list():add()
 			end, { desc = "Add file to Harpoon" })
 			vim.keymap.set("n", "<leader>R", function()
-				harpoon:list():clear()
+				harpoon:list():remove()
 			end, { desc = "Remove file from Harpoon" })
+			vim.keymap.set("n", "<leader>C", function()
+				harpoon:list():clear()
+			end, { desc = "Clear all files from Harpoon" })
 			vim.keymap.set("n", "<C-P>", function()
 				harpoon:list():prev()
 			end, { desc = "Previous file from Harpoon" })
@@ -291,18 +296,29 @@ require("lazy").setup({
 					)
 					map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
 					map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
+
 					local function wrap_widget_filer(code_action)
 						return code_action.title:match("Wrap with widget...")
 					end
 					local function remove_widget_filter(code_action)
 						return code_action.title:match("Remove this widget")
 					end
+
 					map("<leader>fw", function()
 						vim.lsp.buf.code_action({ apply = true, filter = wrap_widget_filer })
 					end, "[F]lutter [W]rap with widget")
 					map("<leader>fr", function()
 						vim.lsp.buf.code_action({ apply = true, filter = remove_widget_filter })
 					end, "[F]lutter [R]emove widget")
+
+					local function organize_go_imports_filer(code_action)
+						return code_action.title:match("Organize Imports")
+					end
+
+					map("<leader>gi", function()
+						vim.lsp.buf.code_action({ apply = true, filter = organize_go_imports_filer })
+					end, "[G]olang Organize Imports")
+
 					map("K", vim.lsp.buf.hover, "Hover Documentation")
 					map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 					--
